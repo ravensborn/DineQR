@@ -8,6 +8,8 @@ export interface MenuSectionAttributes {
 	icon: string | null;
 	display_order: number;
 	is_active: boolean;
+	name_i18n: Record<string, string> | null;
+	description_i18n: Record<string, string> | null;
 	created_at?: Date;
 	updated_at?: Date;
 }
@@ -20,6 +22,8 @@ export class MenuSection extends Model<MenuSectionAttributes> implements MenuSec
 	declare icon: string | null;
 	declare display_order: number;
 	declare is_active: boolean;
+	declare name_i18n: Record<string, string> | null;
+	declare description_i18n: Record<string, string> | null;
 	declare created_at: Date;
 	declare updated_at: Date;
 }
@@ -57,6 +61,14 @@ export function initMenuSection(sequelize: Sequelize) {
 				type: DataTypes.BOOLEAN,
 				allowNull: false,
 				defaultValue: true,
+			},
+			name_i18n: {
+				type: DataTypes.JSONB,
+				allowNull: true,
+			},
+			description_i18n: {
+				type: DataTypes.JSONB,
+				allowNull: true,
 			},
 		},
 		{

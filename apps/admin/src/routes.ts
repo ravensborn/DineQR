@@ -5,8 +5,11 @@ export default [
 	layout('routes/_layout.tsx', [
 		index('routes/dashboard.tsx'),
 		route('restaurants', 'routes/entities/restaurants.tsx'),
-		route('menu-sections', 'routes/entities/menu-sections.tsx'),
-		route('menu-items', 'routes/entities/menu-items.tsx'),
+		layout('routes/menu.tsx', [
+			route('menu', 'routes/entities/menu-sections.tsx'),
+			route('menu/items', 'routes/entities/menu-items.tsx'),
+		]),
+		route('ad-panels', 'routes/entities/ad-panels.tsx'),
 		route('users', 'routes/entities/users.tsx'),
 	]),
 	route('*', 'routes/not-found.tsx'),

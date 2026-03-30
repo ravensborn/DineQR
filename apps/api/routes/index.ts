@@ -5,6 +5,7 @@ import restaurantRoutes from './admin/restaurants.js';
 import menuSectionRoutes from './admin/menu-sections.js';
 import menuItemRoutes from './admin/menu-items.js';
 import userRoutes from './admin/users.js';
+import adPanelRoutes from './admin/ad-panels.js';
 import publicRoutes from './public/index.js';
 import { adminLimiter } from '../middleware/rateLimiter.js';
 
@@ -22,6 +23,7 @@ router.use('/api/admin/restaurants', adminLimiter, restaurantRoutes);
 router.use('/api/admin/menu-sections', adminLimiter, menuSectionRoutes);
 router.use('/api/admin/menu-items', adminLimiter, menuItemRoutes);
 router.use('/api/admin/users', adminLimiter, userRoutes);
+router.use('/api/admin/ad-panels', adminLimiter, adPanelRoutes);
 
 // Public routes
 router.use('/api/public', publicRoutes);

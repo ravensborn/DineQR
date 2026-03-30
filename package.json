@@ -3,11 +3,11 @@
   "private": true,
   "description": "DineQR — Pepsi-branded restaurant digital menu platform",
   "scripts": {
-    "dev": "pnpm run --parallel dev:api dev:menu dev:admin",
+    "dev": "pnpm --filter @dineqr/api --filter @dineqr/menu --filter @dineqr/admin --parallel run dev",
     "dev:api": "pnpm --filter @dineqr/api dev",
     "dev:menu": "pnpm --filter @dineqr/menu dev",
     "dev:admin": "pnpm --filter @dineqr/admin dev",
-    "build": "pnpm run --parallel build:menu build:admin",
+    "build": "pnpm --filter @dineqr/menu --filter @dineqr/admin --parallel run build",
     "build:menu": "pnpm --filter @dineqr/menu build",
     "build:admin": "pnpm --filter @dineqr/admin build",
     "db:migrate": "pnpm --filter @dineqr/api db:migrate",

@@ -4,43 +4,60 @@ import {
 	DashboardOutlined,
 	ShopOutlined,
 	AppstoreOutlined,
-	CoffeeOutlined,
 	UserOutlined,
+	PictureOutlined,
 	LogoutOutlined,
 	MenuFoldOutlined,
 	MenuUnfoldOutlined,
+	ExclamationCircleOutlined,
 } from '@ant-design/icons';
+import { Modal } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { getUser, clearAuth } from '~/lib/auth';
 
 interface NavItem {
-	label: string;
+	labelKey: string;
 	path: string;
 	icon: React.ReactNode;
 	roles?: string[];
 }
 
 const navItems: NavItem[] = [
-	{ label: 'Dashboard', path: '/', icon: <DashboardOutlined /> },
-	{ label: 'Restaurants', path: '/restaurants', icon: <ShopOutlined />, roles: ['super_admin'] },
-	{ label: 'Menu Sections', path: '/menu-sections', icon: <AppstoreOutlined /> },
-	{ label: 'Menu Items', path: '/menu-items', icon: <CoffeeOutlined /> },
-	{ label: 'Users', path: '/users', icon: <UserOutlined />, roles: ['super_admin'] },
+	{ labelKey: 'sidebar.dashboard', path: '/', icon: <DashboardOutlined /> },
+	{ labelKey: 'sidebar.restaurants', path: '/restaurants', icon: <ShopOutlined />, roles: ['super_admin'] },
+	{ labelKey: 'sidebar.menu', path: '/menu', icon: <AppstoreOutlined /> },
+	{ labelKey: 'sidebar.ad_panels', path: '/ad-panels', icon: <PictureOutlined /> },
+	{ labelKey: 'sidebar.users', path: '/users', icon: <UserOutlined />, roles: ['super_admin'] },
 ];
 
 export default function Sidebar() {
 	const location = useLocation();
 	const [collapsed, setCollapsed] = useState(false);
+	const [modal, contextHolder] = Modal.useModal();
+	const { t } = useTranslation();
 	const user = getUser();
 	const userRole = user?.role || 'restaurant_admin';
 
 	const filteredItems = navItems.filter((item) => !item.roles || item.roles.includes(userRole));
 
 	const handleLogout = () => {
-		clearAuth();
-		window.location.href = '/login';
+		modal.confirm({
+			title: t('sidebar.confirm_logout'),
+			icon: <ExclamationCircleOutlined />,
+			content: t('sidebar.logout_message'),
+			okText: t('sidebar.logout'),
+			okType: 'danger',
+			cancelText: t('common.cancel'),
+			onOk() {
+				clearAuth();
+				window.location.href = '/login';
+			},
+		});
 	};
 
 	return (
+		<>
+		{contextHolder}
 		<aside
 			className={`flex h-screen flex-col bg-brand-500 text-white transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'}`}
 		>
@@ -52,7 +69,7 @@ export default function Sidebar() {
 				{!collapsed && (
 					<div>
 						<h1 className="text-lg font-bold leading-tight">DineQR</h1>
-						<p className="text-xs text-white/60">by Pepsi</p>
+						<p className="text-xs text-white/60">{t('sidebar.powered_by')}</p>
 					</div>
 				)}
 			</div>
@@ -71,7 +88,7 @@ export default function Sidebar() {
 									}`}
 								>
 									<span className="text-lg">{item.icon}</span>
-									{!collapsed && <span>{item.label}</span>}
+									{!collapsed && <span>{t(item.labelKey)}</span>}
 								</Link>
 							</li>
 						);
@@ -92,7 +109,7 @@ export default function Sidebar() {
 					className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
 				>
 					<LogoutOutlined className="text-lg" />
-					{!collapsed && <span>Logout</span>}
+					{!collapsed && <span>{t('sidebar.logout')}</span>}
 				</button>
 				<button
 					onClick={() => setCollapsed(!collapsed)}
@@ -102,5 +119,6 @@ export default function Sidebar() {
 				</button>
 			</div>
 		</aside>
+		</>
 	);
 }

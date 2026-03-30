@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
+import { useLocalizedField } from '~/lib/i18n-utils';
 
 interface SectionNavProps {
-	sections: Array<{ id: string; name: string; icon: string | null }>;
+	sections: Array<{ id: string; name: string; icon: string | null; name_i18n?: Record<string, string> | null }>;
 }
 
 export default function SectionNav({ sections }: SectionNavProps) {
 	const [activeId, setActiveId] = useState(sections[0]?.id || '');
 	const navRef = useRef<HTMLDivElement>(null);
+	const l = useLocalizedField();
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(
@@ -62,7 +64,7 @@ export default function SectionNav({ sections }: SectionNavProps) {
 						}`}
 					>
 						{section.icon && <span>{section.icon}</span>}
-						<span>{section.name}</span>
+						<span>{l(section, 'name') || section.name}</span>
 					</button>
 				))}
 			</div>

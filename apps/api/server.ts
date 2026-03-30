@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: '../../.env' });
+dotenv.config({ path: '../../.env', override: false });
 
 import app from './app.js';
 import { sequelize } from './models/index.js';

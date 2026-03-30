@@ -8,10 +8,13 @@ export interface MenuItemAttributes {
 	description: string | null;
 	price: number;
 	image: string | null;
+	images: string[];
 	is_featured: boolean;
 	is_active: boolean;
 	display_order: number;
 	tags: string[];
+	name_i18n: Record<string, string> | null;
+	description_i18n: Record<string, string> | null;
 	created_at?: Date;
 	updated_at?: Date;
 }
@@ -24,10 +27,13 @@ export class MenuItem extends Model<MenuItemAttributes> implements MenuItemAttri
 	declare description: string | null;
 	declare price: number;
 	declare image: string | null;
+	declare images: string[];
 	declare is_featured: boolean;
 	declare is_active: boolean;
 	declare display_order: number;
 	declare tags: string[];
+	declare name_i18n: Record<string, string> | null;
+	declare description_i18n: Record<string, string> | null;
 	declare created_at: Date;
 	declare updated_at: Date;
 }
@@ -64,6 +70,11 @@ export function initMenuItem(sequelize: Sequelize) {
 				type: DataTypes.STRING(500),
 				allowNull: true,
 			},
+			images: {
+				type: DataTypes.JSONB,
+				allowNull: true,
+				defaultValue: [],
+			},
 			is_featured: {
 				type: DataTypes.BOOLEAN,
 				allowNull: false,
@@ -83,6 +94,14 @@ export function initMenuItem(sequelize: Sequelize) {
 				type: DataTypes.JSONB,
 				allowNull: true,
 				defaultValue: [],
+			},
+			name_i18n: {
+				type: DataTypes.JSONB,
+				allowNull: true,
+			},
+			description_i18n: {
+				type: DataTypes.JSONB,
+				allowNull: true,
 			},
 		},
 		{

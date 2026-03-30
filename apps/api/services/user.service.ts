@@ -1,6 +1,6 @@
 import { User, Restaurant } from '../models/index.js';
 import { createCrudService } from './crud.service.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { ApiError } from '../utils/ApiError.js';
 
 const baseService = createCrudService(User, {

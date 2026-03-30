@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../../.env' });
+require('dotenv').config({ path: '../../.env', override: false });
 
 const config = {
   username: process.env.DB_USER || 'dineqr',

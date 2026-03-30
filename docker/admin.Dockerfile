@@ -11,7 +11,6 @@ RUN pnpm install --frozen-lockfile || pnpm install
 FROM base AS development
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/admin/node_modules ./apps/admin/node_modules
-COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules 2>/dev/null || true
 COPY . .
 WORKDIR /app/apps/admin
 EXPOSE 3001

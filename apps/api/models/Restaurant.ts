@@ -11,6 +11,10 @@ export interface RestaurantAttributes {
 	working_hours: Record<string, any> | null;
 	is_active: boolean;
 	theme_color: string | null;
+	default_language: string;
+	currency: string;
+	name_i18n: Record<string, string> | null;
+	description_i18n: Record<string, string> | null;
 	created_at?: Date;
 	updated_at?: Date;
 }
@@ -26,6 +30,10 @@ export class Restaurant extends Model<RestaurantAttributes> implements Restauran
 	declare working_hours: Record<string, any> | null;
 	declare is_active: boolean;
 	declare theme_color: string | null;
+	declare default_language: string;
+	declare currency: string;
+	declare name_i18n: Record<string, string> | null;
+	declare description_i18n: Record<string, string> | null;
 	declare created_at: Date;
 	declare updated_at: Date;
 }
@@ -76,6 +84,24 @@ export function initRestaurant(sequelize: Sequelize) {
 				type: DataTypes.STRING(7),
 				allowNull: true,
 			},
+			default_language: {
+				type: DataTypes.STRING(5),
+				allowNull: false,
+				defaultValue: 'en',
+			},
+			currency: {
+				type: DataTypes.STRING(5),
+				allowNull: false,
+				defaultValue: 'USD',
+			},
+			name_i18n: {
+				type: DataTypes.JSONB,
+				allowNull: true,
+			},
+			description_i18n: {
+				type: DataTypes.JSONB,
+				allowNull: true,
+			},
 		},
 		{
 			sequelize,
@@ -88,8 +114,9 @@ export function initRestaurant(sequelize: Sequelize) {
 	);
 }
 
-export function associateRestaurant(models: { MenuSection: any; MenuItem: any; User: any }) {
+export function associateRestaurant(models: { MenuSection: any; MenuItem: any; User: any; AdPanel: any }) {
 	Restaurant.hasMany(models.MenuSection, { foreignKey: 'restaurant_id', as: 'sections' });
 	Restaurant.hasMany(models.MenuItem, { foreignKey: 'restaurant_id', as: 'items' });
 	Restaurant.hasMany(models.User, { foreignKey: 'restaurant_id', as: 'users' });
+	Restaurant.hasMany(models.AdPanel, { foreignKey: 'restaurant_id', as: 'ads' });
 }

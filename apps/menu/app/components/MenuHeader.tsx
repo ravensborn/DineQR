@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocalizedField } from '~/lib/i18n-utils';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface MenuHeaderProps {
 	restaurant: {
@@ -8,11 +11,18 @@ interface MenuHeaderProps {
 		address: string | null;
 		phone: string | null;
 		working_hours: Record<string, any> | null;
+		name_i18n?: Record<string, string> | null;
+		description_i18n?: Record<string, string> | null;
+		default_language?: string;
 	};
 }
 
 export default function MenuHeader({ restaurant }: MenuHeaderProps) {
 	const [showInfo, setShowInfo] = useState(false);
+	const { t } = useTranslation();
+	const l = useLocalizedField();
+	const name = l(restaurant, 'name', restaurant.default_language) || restaurant.name;
+	const description = l(restaurant, 'description', restaurant.default_language);
 
 	return (
 		<header>
@@ -32,15 +42,16 @@ export default function MenuHeader({ restaurant }: MenuHeaderProps) {
 							</div>
 						)}
 						<div>
-							<h1 className="text-2xl font-bold">{restaurant.name}</h1>
-							{restaurant.description && (
-								<p className="mt-0.5 text-sm text-white/70">{restaurant.description}</p>
+							<h1 className="text-2xl font-bold">{name}</h1>
+							{description && (
+								<p className="mt-0.5 text-sm text-white/70">{description}</p>
 							)}
 						</div>
 					</div>
-					<div className="flex flex-col items-end gap-1">
+					<div className="flex flex-col items-end gap-2">
+						<LanguageSwitcher />
 						<div className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium backdrop-blur-sm">
-							Powered by <span className="font-bold">Pepsi</span>
+							{t('menu.powered_by')}
 						</div>
 					</div>
 				</div>
@@ -74,24 +85,24 @@ export default function MenuHeader({ restaurant }: MenuHeaderProps) {
 							<div className="mt-3 space-y-2 border-t border-gray-100 pt-3 text-sm text-gray-600">
 								{restaurant.address && (
 									<div className="flex items-start gap-2">
-										<span className="font-medium text-gray-700">Address:</span>
+										<span className="font-medium text-gray-700">{t('menu.address')}</span>
 										<span>{restaurant.address}</span>
 									</div>
 								)}
 								{restaurant.phone && (
 									<div className="flex items-start gap-2">
-										<span className="font-medium text-gray-700">Phone:</span>
+										<span className="font-medium text-gray-700">{t('menu.phone')}</span>
 										<a href={`tel:${restaurant.phone}`} className="text-brand-500 underline">{restaurant.phone}</a>
 									</div>
 								)}
 								{restaurant.working_hours && (
 									<div>
-										<span className="font-medium text-gray-700">Hours:</span>
+										<span className="font-medium text-gray-700">{t('menu.hours')}</span>
 										<div className="mt-1 grid grid-cols-2 gap-1 text-xs">
 											{Object.entries(restaurant.working_hours).map(([day, hours]: [string, any]) => (
 												<div key={day} className="flex justify-between rounded bg-gray-50 px-2 py-1">
 													<span className="font-medium capitalize">{day}</span>
-													<span>{hours.closed ? 'Closed' : `${hours.open} — ${hours.close}`}</span>
+													<span>{hours.closed ? t('menu.closed') : `${hours.open} — ${hours.close}`}</span>
 												</div>
 											))}
 										</div>

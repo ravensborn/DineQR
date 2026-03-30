@@ -17,7 +17,7 @@ router.get('/:id', uuidParam(), validate, controller.getById);
 
 router.post(
 	'/',
-	upload.single('image'),
+	upload.array('images', 10),
 	body('name').notEmpty().withMessage('Item name is required'),
 	body('price').isDecimal().withMessage('Valid price is required'),
 	body('section_id').isUUID(4).withMessage('Valid section ID is required'),
@@ -25,8 +25,11 @@ router.post(
 	validate,
 	asyncHandler(async (req, res) => {
 		const data = { ...req.body };
-		if (req.file) data.image = getFileUrl(req.file.filename);
+		if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+			data.images = req.files.map((f: Express.Multer.File) => getFileUrl(f.filename));
+		}
 		if (typeof data.tags === 'string') data.tags = JSON.parse(data.tags);
+		if (typeof data.images === 'string') data.images = JSON.parse(data.images);
 		const record = await menuItemService.create(data);
 		res.status(201).json({ success: true, message: 'Menu item created', data: record });
 	}),
@@ -35,12 +38,22 @@ router.post(
 router.put(
 	'/:id',
 	uuidParam(),
-	upload.single('image'),
+	upload.array('images', 10),
 	validate,
 	asyncHandler(async (req, res) => {
 		const data = { ...req.body };
-		if (req.file) data.image = getFileUrl(req.file.filename);
+		if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+			// New files uploaded — merge with existing if provided
+			const newImages = req.files.map((f: Express.Multer.File) => getFileUrl(f.filename));
+			const existingImages = data.existingImages ? JSON.parse(data.existingImages) : [];
+			data.images = [...existingImages, ...newImages];
+			delete data.existingImages;
+		} else if (data.existingImages) {
+			data.images = JSON.parse(data.existingImages);
+			delete data.existingImages;
+		}
 		if (typeof data.tags === 'string') data.tags = JSON.parse(data.tags);
+		if (typeof data.images === 'string') data.images = JSON.parse(data.images);
 		const record = await menuItemService.update(req.params.id, data);
 		res.json({ success: true, message: 'Menu item updated', data: record });
 	}),

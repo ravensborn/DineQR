@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: '../../.env' });
+dotenv.config({ path: '../../.env', override: false });
 
 const sequelize = new Sequelize({
   database: process.env.DB_NAME || 'dineqr_db',

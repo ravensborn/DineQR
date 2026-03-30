@@ -7,6 +7,7 @@ export default defineConfig({
 	plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
 	server: {
 		port: 3001,
+		host: '0.0.0.0',
 		proxy: {
 			'/api': {
 				target: 'http://localhost:4000',

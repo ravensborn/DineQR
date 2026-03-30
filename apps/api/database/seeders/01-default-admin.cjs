@@ -1,6 +1,6 @@
 'use strict';
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const ADMIN_ID = '00000000-0000-4000-a000-000000000001';
 

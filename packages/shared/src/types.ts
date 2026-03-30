@@ -1,4 +1,4 @@
-import type { UserRole, MenuItemTag } from './constants';
+import type { UserRole, MenuItemTag, SupportedLanguage, CurrencyCode } from './constants';
 
 export interface BaseEntity {
 	id: string;
@@ -14,6 +14,8 @@ export interface User extends BaseEntity {
 	is_active: boolean;
 }
 
+export type I18nString = Partial<Record<SupportedLanguage, string>>;
+
 export interface Restaurant extends BaseEntity {
 	name: string;
 	slug: string;
@@ -24,6 +26,10 @@ export interface Restaurant extends BaseEntity {
 	working_hours: WorkingHours | null;
 	is_active: boolean;
 	theme_color: string | null;
+	default_language: SupportedLanguage;
+	currency: CurrencyCode;
+	name_i18n: I18nString | null;
+	description_i18n: I18nString | null;
 }
 
 export interface MenuSection extends BaseEntity {
@@ -33,6 +39,8 @@ export interface MenuSection extends BaseEntity {
 	icon: string | null;
 	display_order: number;
 	is_active: boolean;
+	name_i18n: I18nString | null;
+	description_i18n: I18nString | null;
 }
 
 export interface MenuItem extends BaseEntity {
@@ -42,10 +50,13 @@ export interface MenuItem extends BaseEntity {
 	description: string | null;
 	price: number;
 	image: string | null;
+	images: string[];
 	is_featured: boolean;
 	is_active: boolean;
 	display_order: number;
 	tags: MenuItemTag[];
+	name_i18n: I18nString | null;
+	description_i18n: I18nString | null;
 }
 
 export interface WorkingHours {
