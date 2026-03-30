@@ -1,0 +1,100 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-dineqr}
+      POSTGRES_PASSWORD: ${DB_PASS:-dineqr_secret}
+      POSTGRES_DB: ${DB_NAME:-dineqr_db}
+    ports:
+      - "${DB_EXPOSE_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-dineqr}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dineqr
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      target: development
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-4000}:4000"
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-dineqr}
+      DB_PASS: ${DB_PASS:-dineqr_secret}
+      DB_NAME: ${DB_NAME:-dineqr_db}
+      SYSTEM_USER_ACCESS_TOKEN_PRIVATE_KEY: ${SYSTEM_USER_ACCESS_TOKEN_PRIVATE_KEY:-dineqr_access_secret}
+      SYSTEM_USER_REFRESH_TOKEN_PRIVATE_KEY: ${SYSTEM_USER_REFRESH_TOKEN_PRIVATE_KEY:-dineqr_refresh_secret}
+      ACCESS_TOKEN_EXPIRES_IN: ${ACCESS_TOKEN_EXPIRES_IN:-15m}
+      REFRESH_TOKEN_EXPIRES_IN: ${REFRESH_TOKEN_EXPIRES_IN:-30d}
+      CORS_ORIGINS: http://localhost:3000,http://localhost:3001,http://menu:3000,http://admin:3001
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-Admin@dineqr2026}
+      VITE_MENU_URL: ${VITE_MENU_URL:-http://localhost:3000}
+    volumes:
+      - ./apps/api:/app/apps/api
+      - ./packages:/app/packages
+      - /app/apps/api/node_modules
+      - api_uploads:/app/apps/api/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - dineqr
+
+  menu:
+    build:
+      context: .
+      dockerfile: docker/menu.Dockerfile
+      target: development
+    restart: unless-stopped
+    ports:
+      - "${MENU_PORT:-3000}:3000"
+    environment:
+      API_URL: http://api:4000
+    volumes:
+      - ./apps/menu:/app/apps/menu
+      - ./packages:/app/packages
+      - /app/apps/menu/node_modules
+    depends_on:
+      - api
+    networks:
+      - dineqr
+
+  admin:
+    build:
+      context: .
+      dockerfile: docker/admin.Dockerfile
+      target: development
+    restart: unless-stopped
+    ports:
+      - "${ADMIN_PORT:-3001}:3001"
+    environment:
+      VITE_API_URL: http://localhost:4000
+      VITE_MENU_URL: http://localhost:3000
+    volumes:
+      - ./apps/admin:/app/apps/admin
+      - ./packages:/app/packages
+      - /app/apps/admin/node_modules
+    depends_on:
+      - api
+    networks:
+      - dineqr
+
+volumes:
+  postgres_data:
+  api_uploads:
+
+networks:
+  dineqr:
+    driver: bridge

@@ -1,0 +1,33 @@
+{
+  "name": "dineqr",
+  "private": true,
+  "description": "DineQR — Pepsi-branded restaurant digital menu platform",
+  "scripts": {
+    "dev": "pnpm run --parallel dev:api dev:menu dev:admin",
+    "dev:api": "pnpm --filter @dineqr/api dev",
+    "dev:menu": "pnpm --filter @dineqr/menu dev",
+    "dev:admin": "pnpm --filter @dineqr/admin dev",
+    "build": "pnpm run --parallel build:menu build:admin",
+    "build:menu": "pnpm --filter @dineqr/menu build",
+    "build:admin": "pnpm --filter @dineqr/admin build",
+    "db:migrate": "pnpm --filter @dineqr/api db:migrate",
+    "db:migrate:undo": "pnpm --filter @dineqr/api db:migrate:undo",
+    "db:seed": "pnpm --filter @dineqr/api db:seed",
+    "db:seed:undo": "pnpm --filter @dineqr/api db:seed:undo",
+    "db:init": "pnpm db:migrate && pnpm db:seed",
+    "lint": "pnpm run -r lint",
+    "format": "prettier --write \"**/*.{ts,tsx,json,css,md}\"",
+    "typecheck": "pnpm run -r typecheck",
+    "docker:up": "docker compose up",
+    "docker:down": "docker compose down"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  }
+}
