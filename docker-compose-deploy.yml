@@ -1,0 +1,73 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      target: development
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${PORT:-4000}
+      DB_HOST: ${DB_HOST:-localhost}
+      DB_PORT: ${DB_PORT:-5433}
+      DB_USER: ${DB_USER:-dineqr}
+      DB_PASS: ${DB_PASS:-dineqr_secret}
+      DB_NAME: ${DB_NAME:-dineqr_db}
+      SYSTEM_USER_ACCESS_TOKEN_PRIVATE_KEY: ${SYSTEM_USER_ACCESS_TOKEN_PRIVATE_KEY:-dineqr_access_secret}
+      SYSTEM_USER_REFRESH_TOKEN_PRIVATE_KEY: ${SYSTEM_USER_REFRESH_TOKEN_PRIVATE_KEY:-dineqr_refresh_secret}
+      ACCESS_TOKEN_EXPIRES_IN: ${ACCESS_TOKEN_EXPIRES_IN:-15m}
+      REFRESH_TOKEN_EXPIRES_IN: ${REFRESH_TOKEN_EXPIRES_IN:-30d}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:3001}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-Admin@dineqr2026}
+      VITE_MENU_URL: ${VITE_MENU_URL:-http://localhost:3000}
+    volumes:
+      - ./apps/api:/app/apps/api
+      - ./packages:/app/packages
+      - /app/apps/api/node_modules
+      - api_uploads:/app/apps/api/uploads
+    networks:
+      - dokploy-network
+    labels:
+      - traefik.enable=true
+  menu:
+    build:
+      context: .
+      dockerfile: docker/menu.Dockerfile
+      target: development
+    restart: unless-stopped
+    environment:
+      API_URL: ${API_URL:-http://localhost:4000}
+    volumes:
+      - ./apps/menu:/app/apps/menu
+      - ./packages:/app/packages
+      - /app/apps/menu/node_modules
+    depends_on:
+      - api
+    networks:
+      - dokploy-network
+    labels:
+      - traefik.enable=true
+  admin:
+    build:
+      context: .
+      dockerfile: docker/admin.Dockerfile
+      target: development
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:4000}
+      VITE_MENU_URL: ${VITE_MENU_URL:-http://localhost:3000}
+    volumes:
+      - ./apps/admin:/app/apps/admin
+      - ./packages:/app/packages
+      - /app/apps/admin/node_modules
+    depends_on:
+      - api
+    networks:
+      - dokploy-network
+    labels:
+      - traefik.enable=true
+volumes:
+  api_uploads:
+networks:
+  dokploy-network:
+    external: true
