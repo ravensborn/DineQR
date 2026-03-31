@@ -19,6 +19,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 				<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+				<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+				<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+				<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+				<link rel="icon" type="image/x-icon" href="/favicon/favicon.ico" />
+				<link rel="manifest" href="/favicon/site.webmanifest" />
 				<Meta />
 				<Links />
 			</head>
